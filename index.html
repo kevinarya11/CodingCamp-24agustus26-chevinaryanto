@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Life Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">✦</span>
+      <span class="logo-text">LifeBoard</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-filter="all">
+        <span class="nav-icon">⊞</span> All Tasks
+        <span class="nav-count" id="count-all">0</span>
+      </button>
+      <button class="nav-btn" data-filter="today">
+        <span class="nav-icon">☀</span> Today
+        <span class="nav-count" id="count-today">0</span>
+      </button>
+      <button class="nav-btn" data-filter="upcoming">
+        <span class="nav-icon">📅</span> Upcoming
+        <span class="nav-count" id="count-upcoming">0</span>
+      </button>
+      <button class="nav-btn" data-filter="completed">
+        <span class="nav-icon">✓</span> Completed
+        <span class="nav-count" id="count-completed">0</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-section-title">Categories</div>
+    <nav class="sidebar-nav">
+      <button class="nav-btn" data-filter="work">
+        <span class="cat-dot cat-work"></span> Work
+        <span class="nav-count" id="count-work">0</span>
+      </button>
+      <button class="nav-btn" data-filter="personal">
+        <span class="cat-dot cat-personal"></span> Personal
+        <span class="nav-count" id="count-personal">0</span>
+      </button>
+      <button class="nav-btn" data-filter="health">
+        <span class="cat-dot cat-health"></span> Health
+        <span class="nav-count" id="count-health">0</span>
+      </button>
+      <button class="nav-btn" data-filter="learning">
+        <span class="cat-dot cat-learning"></span> Learning
+        <span class="nav-count" id="count-learning">0</span>
+      </button>
+      <button class="nav-btn" data-filter="finance">
+        <span class="cat-dot cat-finance"></span> Finance
+        <span class="nav-count" id="count-finance">0</span>
+      </button>
+    </nav>
+
+    <!-- Progress Ring -->
+    <div class="sidebar-progress">
+      <div class="progress-ring-wrap">
+        <svg class="progress-ring" viewBox="0 0 80 80">
+          <circle class="ring-bg" cx="40" cy="40" r="32" />
+          <circle class="ring-fill" id="ring-fill" cx="40" cy="40" r="32" />
+        </svg>
+        <div class="progress-ring-label">
+          <span id="progress-pct">0%</span>
+          <small>done</small>
+        </div>
+      </div>
+      <p class="progress-caption" id="progress-caption">No tasks yet</p>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="clock" id="clock">00:00:00</div>
+        <div class="date-display" id="date-display">Saturday, August 29, 2026</div>
+      </div>
+      <div class="topbar-right">
+        <!-- Challenge 1: Light / Dark mode toggle -->
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle theme">
+          <span class="theme-icon" id="theme-icon">🌙</span>
+        </button>
+        <button class="btn-primary" id="open-modal-btn">+ Add Task</button>
+      </div>
+    </header>
+
+    <!-- GREETING BANNER -->
+    <section class="greeting-banner" id="greeting-banner" aria-live="polite">
+      <div class="greeting-emoji" id="greeting-emoji">☀️</div>
+      <div class="greeting-text">
+        <h1 class="greeting-msg" id="greeting-msg">Good morning!</h1>
+        <p class="greeting-sub" id="greeting-sub">Have a productive day ahead.</p>
+      </div>
+      <!-- Challenge 2: Custom name -->
+      <div class="greeting-name-wrap">
+        <input
+          type="text"
+          class="greeting-name-input"
+          id="greeting-name"
+          placeholder="Your name"
+          maxlength="30"
+          autocomplete="off"
+          aria-label="Enter your name"
+        />
+        <span class="greeting-name-hint">✎</span>
+      </div>
+    </section>
+
+    <!-- FOCUS TIMER + QUICK LINKS ROW -->
+    <section class="widgets-row">
+
+      <!-- FOCUS TIMER -->
+      <div class="widget-card timer-card">
+        <div class="widget-header">
+          <span class="widget-icon">⏱</span>
+          <h2 class="widget-title">Focus Timer</h2>
+          <span class="timer-status-badge" id="timer-status-badge">Ready</span>
+        </div>
+        <div class="timer-display" id="timer-display" aria-live="polite" aria-label="Timer">25:00</div>
+        <div class="timer-progress-wrap">
+          <div class="timer-progress-bar" id="timer-progress-bar"></div>
+        </div>
+        <div class="timer-controls">
+          <button class="timer-btn timer-btn-start" id="timer-start" aria-label="Start timer">▶ Start</button>
+          <button class="timer-btn timer-btn-stop"  id="timer-stop"  aria-label="Pause timer" disabled>⏸ Pause</button>
+          <button class="timer-btn timer-btn-reset" id="timer-reset" aria-label="Reset timer">↺ Reset</button>
+        </div>
+        <!-- Challenge 3: Custom Pomodoro duration -->
+        <div class="timer-duration-row">
+          <label class="timer-duration-label" for="timer-duration">Duration:</label>
+          <div class="timer-duration-pills" id="timer-duration-pills">
+            <button class="duration-pill active" data-minutes="25">25 min</button>
+            <button class="duration-pill" data-minutes="50">50 min</button>
+            <button class="duration-pill" data-minutes="5">5 min</button>
+            <button class="duration-pill" data-minutes="10">10 min</button>
+          </div>
+          <input
+            type="number"
+            id="timer-duration"
+            class="timer-duration-input"
+            min="1"
+            max="120"
+            value="25"
+            aria-label="Custom duration in minutes"
+          />
+          <span class="timer-duration-unit">min</span>
+        </div>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div class="widget-card links-card">
+        <div class="widget-header">
+          <span class="widget-icon">🔗</span>
+          <h2 class="widget-title">Quick Links</h2>
+          <button class="widget-action-btn" id="add-link-btn" aria-label="Add quick link">+ Add</button>
+        </div>
+        <ul class="links-list" id="links-list">
+          <!-- rendered by JS -->
+        </ul>
+        <div class="links-empty" id="links-empty">
+          <p>No links saved yet.<br/>Hit <strong>+ Add</strong> to add a favourite site.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- STATS CARDS -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-total">⊞</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-total">0</span>
+          <span class="stat-label">Total Tasks</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-done">✓</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-done">0</span>
+          <span class="stat-label">Completed</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-pending">◷</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-pending">0</span>
+          <span class="stat-label">In Progress</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-overdue">⚠</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-overdue">0</span>
+          <span class="stat-label">Overdue</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILTER & SEARCH BAR -->
+    <section class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          class="search-input"
+          id="search-input"
+          placeholder="Search tasks..."
+        />
+      </div>
+      <div class="sort-wrap">
+        <label for="sort-select" class="sort-label">Sort:</label>
+        <select id="sort-select" class="sort-select">
+          <option value="created">Date Created</option>
+          <option value="due">Due Date</option>
+          <option value="priority">Priority</option>
+          <option value="alpha">A → Z</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- TASK LIST -->
+    <section class="task-section">
+      <div class="task-list-header">
+        <h2 class="task-list-title" id="list-title">All Tasks</h2>
+      </div>
+      <ul class="task-list" id="task-list">
+        <!-- tasks injected by JS -->
+      </ul>
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">📋</div>
+        <p>No tasks here yet.<br/>Hit <strong>+ Add Task</strong> to get started.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD / EDIT TASK MODAL -->
+  <div class="modal-overlay" id="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">New Task</h3>
+        <button class="modal-close" id="modal-close" aria-label="Close modal">✕</button>
+      </div>
+      <form class="modal-form" id="task-form" novalidate>
+        <input type="hidden" id="edit-id" />
+
+        <div class="form-group">
+          <label for="task-title">Task Title <span class="required">*</span></label>
+          <input
+            type="text"
+            id="task-title"
+            placeholder="What do you need to do?"
+            maxlength="120"
+            autocomplete="off"
+          />
+          <span class="field-error" id="title-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="task-notes">Notes</label>
+          <textarea
+            id="task-notes"
+            placeholder="Add any details or notes..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-category">Category</label>
+            <select id="task-category">
+              <option value="work">💼 Work</option>
+              <option value="personal">🏠 Personal</option>
+              <option value="health">💪 Health</option>
+              <option value="learning">📚 Learning</option>
+              <option value="finance">💰 Finance</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="task-priority">Priority</label>
+            <select id="task-priority">
+              <option value="low">🟢 Low</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="high">🔴 High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="task-due">Due Date</label>
+          <input type="date" id="task-due" />
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="cancel-btn">Cancel</button>
+          <button type="submit" class="btn-primary" id="save-btn">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal-overlay" id="delete-overlay" aria-hidden="true">
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h3 class="modal-title">Delete Task?</h3>
+        <button class="modal-close" id="delete-cancel-x">✕</button>
+      </div>
+      <p class="delete-msg">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="delete-cancel">Cancel</button>
+        <button class="btn-danger" id="delete-confirm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK LINK MODAL -->
+  <div class="modal-overlay" id="link-modal-overlay" aria-hidden="true">
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="link-modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="link-modal-title">Add Quick Link</h3>
+        <button class="modal-close" id="link-modal-close" aria-label="Close">✕</button>
+      </div>
+      <form class="modal-form" id="link-form" novalidate>
+        <div class="form-group">
+          <label for="link-name">Label <span class="required">*</span></label>
+          <input type="text" id="link-name" placeholder="e.g. GitHub" maxlength="30" autocomplete="off" />
+          <span class="field-error" id="link-name-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="link-url">URL <span class="required">*</span></label>
+          <input type="url" id="link-url" placeholder="https://github.com" autocomplete="off" />
+          <span class="field-error" id="link-url-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="link-emoji">Icon (emoji, optional)</label>
+          <input type="text" id="link-emoji" placeholder="🌐" maxlength="4" autocomplete="off" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="link-cancel-btn">Cancel</button>
+          <button type="submit" class="btn-primary">Save Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
